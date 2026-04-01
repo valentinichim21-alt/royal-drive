@@ -16,14 +16,20 @@
 
         .verdict { 
     position: fixed; 
-    top: 10px; /* Acum e sus de tot */
+    top: 10px; /* Acum e sus de tot, sub oglindă */
     left: 5%; 
     width: 90%; 
-    padding: 15px; 
-    border-radius: 10px; 
-    font-size: 1.2em; 
+    padding: 12px; 
+    border-radius: 8px; 
+    font-size: 1.1em; 
+    font-weight: bold; 
+    text-align: center; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     display: none; 
     z-index: 9999;
+    text-transform: uppercase; 
+    color: white;
+    pointer-events: none; /* FOARTE IMPORTANT: Asta face bara să fie "fantomă" */
 }
         .trial-tag { 
             position: fixed; bottom: 10px; width: 100%; 
