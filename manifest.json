@@ -1,9 +1,20 @@
 {
   "short_name": "IcaApp",
-  "name": "Ica App Store",
+  "name": "Ică App Store",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
   "start_url": "index.html",
   "display": "standalone",
-  "orientation": "portrait",
   "background_color": "#000000",
-  "theme_color": "#2700ff"
+  "theme_color": "#000000"
 }
