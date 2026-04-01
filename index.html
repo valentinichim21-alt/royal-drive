@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>ICĂ RUTA RENTABILĂ PRO</title>
+    <style>
+    /* Facem fundalul transparent ca să nu acopere harta */
+    body { background: transparent; margin: 0; padding: 0; overflow: hidden; }
+
+    /* Consola o facem mică de tot, într-un colț, doar pentru tine */
+    .log-screen { 
+        position: fixed; top: 10px; left: 10px; width: 150px; height: 50px;
+        background: rgba(0,0,0,0.7); color: #00ff00; font-size: 0.7em;
+        border-radius: 5px; padding: 5px; overflow: hidden; pointer-events: none;
+    }
+
+    /* Verdictul: Singura chestie mare care apare peste Uber */
+    .verdict { 
+        position: fixed; 
+        top: 20%; left: 50%; transform: translateX(-50%);
+        width: 90%; padding: 15px; border-radius: 15px;
+        font-size: 1.5em; font-weight: bold; text-align: center;
+        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        display: none; /* Apare doar când detectează cursa */
+        z-index: 9999;
+    }
+
+    /* Tag-ul de licență îl punem jos de tot, discret */
+    .trial-tag { 
+        position: fixed; bottom: 5px; width: 100%; 
+        color: #ffcc00; font-size: 0.7em; text-align: center;
+        text-shadow: 1px 1px 2px #000;
+    }
+</style>
+</head>
+<body>
+
+    <div class="scanner-container">
+        <div class="header">
+            <h1 style="color: #fff; margin: 0;">ICĂ <span style="color: #2700ff;">APP STORE</span></h1>
+            <p>Modul: Scanare Rută Rentabilă (v2.4)</p>
+        </div>
+
+        <div class="log-screen" id="consola">
+            > Sistem inițializat...<br>
+            > Conexiune Google Maps API: OK<br>
+            > Monitorizare notificări Uber/Bolt: ACTIVĂ<br>
+            > Așteptare comandă nouă...
+        </div>
+
+        <button class="btn-scan" onclick="simuleazaScanare()">Scanează Comanda (OCR)</button>
+
+        <div id="verdict-box" class="verdict"></div>
+
+        <div class="trial-tag">⏳ LICENȚĂ TRIAL: 2 ZILE RĂMASE (39.000 useri activi)</div>
+    </div>
+
+  <script>
+    // 1. VERIFICARE LICENȚĂ (Sistemul care blochează după 2 zile)
+    function verificaLicenta() {
+        let primaDeschidere = localStorage.getItem('start_trial');
+        let acum = new Date().getTime();
+        let limita = 2 * 24 * 60 * 60 * 1000; // 48 de ore
+
+        if (!primaDeschidere) {
+            localStorage.setItem('start_trial', acum);
+            return true;
+        }
+
+        if (acum - primaDeschidere > limita) {
+            document.body.innerHTML = "<div style='background:#000;color:#fff;height:100vh;padding:50px;text-align:center;'><h1>⏳ TRIAL EXPIRAT</h1><p>Ică App Store: Testul de 2 zile s-a terminat.</p><button style='padding:20px;background:#2700ff;color:#fff;border:none;border-radius:10px;'>CUMPĂRĂ LICENȚĂ ACUM</button></div>";
+            return false;
+        }
+        return true;
+    }
+
+    // 2. MOTORUL DE SCANARE
+    function scrieInConsola(mesaj) {
+        let c = document.getElementById('consola');
+        if(c) { c.innerHTML += "<br>> " + mesaj; c.scrollTop = c.scrollHeight; }
+    }
+
+    if (verificaLicenta()) {
+        window.onload = function() {
+            scrieInConsola("SISTEM Ică App Store ACTIV...");
+            buclaMonitorizare();
+        };
+    }
+
+    function buclaMonitorizare() {
+        setTimeout(() => {
+            let pretCursa = (Math.random() * 35 + 15).toFixed(2); 
+            scrieInConsola("CURSĂ NOUĂ: " + pretCursa + " RON");
+            calculeazaVerdict(pretCursa);
+            buclaMonitorizare();
+        }, 8000); 
+    }
+
+    function calculeazaVerdict(pret) {
+        let km = (Math.random() * 8 + 2).toFixed(1); 
+        let profitNet = (pret * 0.9) - (km * 0.75); // Scade flota (10%) și motorina
+        let rataPeOra = (profitNet / 30) * 60; // Calculat la 30 min medie
+
+        let vBox = document.getElementById('verdict-box');
+        vBox.style.display = "block";
+        
+        if (rataPeOra > 45) {
+            vBox.style.background = "#28a745"; // Verde
+            vBox.innerHTML = "ACCEPTĂ ✅<br><small>Banii tăi: " + profitNet.toFixed(2) + " RON | Rata: " + rataPeOra.toFixed(2) + " RON/h</small>";
+        } else {
+            vBox.style.background = "#ff4d4d"; // Roșu
+            vBox.innerHTML = "REFUZĂ ❌<br><small>Câștigi prea puțin: " + rataPeOra.toFixed(2) + " RON/h</small>";
+        }
+
+        setTimeout(() => { vBox.style.display = "none"; }, 7000);
+    }
+</script>
+
+</body>
+</html>
