@@ -5,23 +5,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { background: rgba(0,0,0,0.9); color: white; text-align: center; font-family: sans-serif; margin: 0; padding: 10px; }
-        #rezultat { font-size: 1.4em; padding: 15px; border-radius: 10px; font-weight: bold; margin-top: 10px; }
-        .verde { background: #28a745; } .rosu { background: #ff4d4d; }
+        body { background: rgba(0,0,0,0.9); color: white; text-align: center; font-family: sans-serif; margin: 0; padding: 15px; overflow: hidden; }
+        #verdict { font-size: 1.8em; padding: 20px; border-radius: 12px; font-weight: bold; border: 2px solid rgba(255,255,255,0.2); }
+        .verde { background: #28a745; box-shadow: 0 0 20px #28a745; }
+        .rosu { background: #ff4d4d; box-shadow: 0 0 20px #ff4d4d; }
+        .info { font-size: 0.6em; display: block; margin-top: 10px; opacity: 0.8; }
     </style>
 </head>
 <body>
-    <div id="rezultat">Aștept Uber...</div>
+    <div id="verdict">AȘTEPT CURSĂ UBER...</div>
     <script>
         const params = new URLSearchParams(window.location.search);
         if (params.has('p')) {
-            let p = parseFloat(params.get('p').replace(',', '.')); // Preț de la MacroDroid
-            let d = 5; // KM estimați (sau poți pune alt parametru)
-            let profit = (p * 0.75) - (d * 0.80);
-            let rata = (profit / (d * 1.5)) * 60;
-            let div = document.getElementById('rezultat');
-            if (rata > 40) { div.className = 'verde'; div.innerHTML = "ACCEPTĂ ✅<br>" + rata.toFixed(2) + " RON/h"; }
-            else { div.className = 'rosu'; div.innerHTML = "REFUZĂ ❌<br>" + rata.toFixed(2) + " RON/h"; }
+            // Curățăm textul primit (scoatem "RON", spații, etc)
+            let raw = params.get('p').replace(/[^\d,.]/g, '').replace(',', '.');
+            let pret = parseFloat(raw);
+            
+            if (!isNaN(pret)) {
+                let km = 5; // Estimare medie, o putem rafina ulterior
+                let profit = (pret * 0.75) - (km * 0.80);
+                let rata = (profit / (km * 1.5)) * 60;
+                
+                let v = document.getElementById('verdict');
+                if (rata > 45) {
+                    v.className = 'verde';
+                    v.innerHTML = "ACCEPTĂ ✅<br><span class='info'>RATA: " + rata.toFixed(2) + " RON/h</span>";
+                } else {
+                    v.className = 'rosu';
+                    v.innerHTML = "REFUZĂ ❌<br><span class='info'>RATA: " + rata.toFixed(2) + " RON/h</span>";
+                }
+            }
         }
     </script>
 </body>
