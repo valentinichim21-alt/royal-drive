@@ -4,94 +4,25 @@
     <link rel="manifest" href="manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ică App Store</title>
     <style>
-        body { 
-            background: rgba(0, 0, 0, 0.9); 
-            color: white; 
-            font-family: sans-serif; 
-            text-align: center; 
-            margin: 0; padding: 15px; 
-        }
-        input { 
-            width: 80%; 
-            padding: 12px; 
-            margin: 10px 0; 
-            border-radius: 8px; 
-            border: 1px solid #444; 
-            background: #222; 
-            color: white; 
-            font-size: 1.2em; 
-        }
-        button { 
-            width: 85%; 
-            padding: 15px; 
-            background: #28a745; 
-            color: white; 
-            border: none; 
-            border-radius: 10px; 
-            font-weight: bold; 
-            font-size: 1.1em; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
-        #verdict-box { 
-            margin-top: 20px; 
-            padding: 15px; 
-            border-radius: 10px; 
-            display: none; 
-            font-weight: bold; 
-            font-size: 1.1em;
-        }
-        .trial-tag { 
-            position: fixed; bottom: 10px; width: 100%; left: 0;
-            text-align: center; color: #ffcc00; 
-            font-size: 0.8em; font-weight: bold;
-        }
+        body { background: rgba(0,0,0,0.9); color: white; text-align: center; font-family: sans-serif; margin: 0; padding: 10px; }
+        #rezultat { font-size: 1.4em; padding: 15px; border-radius: 10px; font-weight: bold; margin-top: 10px; }
+        .verde { background: #28a745; } .rosu { background: #ff4d4d; }
     </style>
 </head>
 <body>
-
-    <h3>💰 CALCULATOR PROFIT</h3>
-    <input type="number" id="pret_input" placeholder="Preț Cursă (RON)" step="0.01">
-    <input type="number" id="km_input" placeholder="Total KM (până la destinație)" step="0.1">
-    <br>
-    <button onclick="calculeazaReal()">CALCULEAZĂ ACUM</button>
-
-    <div id="verdict-box"></div>
-    <div class="trial-tag">⏳ LICENȚĂ TRIAL: 2 ZILE RĂMASE</div>
-
-<script>
-    function calculeazaReal() {
-        let pret = document.getElementById('pret_input').value;
-        let km = document.getElementById('km_input').value;
-        let vBox = document.getElementById('verdict-box');
-
-        if (pret > 0 && km > 0) {
-            // Formula: (Pret * 0.75 - comision) - (km * 0.80 - benzina/uzura)
-            let profitNet = (pret * 0.75) - (km * 0.80);
-            let rataPeOra = (profitNet / (km * 1.5)) * 60; // estimare timp/trafic
-
-            vBox.style.display = "block";
-            
-            if (rataPeOra > 40) {
-                vBox.style.background = "#28a745"; 
-                vBox.innerHTML = "ACCEPTĂ ✅<br><span style='font-size:0.8em;'>Rămâi cu: " + profitNet.toFixed(2) + " RON | Rata: " + rataPeOra.toFixed(2) + " RON/h</span>";
-            } else {
-                vBox.style.background = "#ff4d4d"; 
-                vBox.innerHTML = "REFUZĂ ❌<br><span style='font-size:0.8em;'>Câștigi prea puțin: " + rataPeOra.toFixed(2) + " RON/h</span>";
-            }
-        } else {
-            alert("Bagă cifrele cursei, boss!");
+    <div id="rezultat">Aștept Uber...</div>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('p')) {
+            let p = parseFloat(params.get('p').replace(',', '.')); // Preț de la MacroDroid
+            let d = 5; // KM estimați (sau poți pune alt parametru)
+            let profit = (p * 0.75) - (d * 0.80);
+            let rata = (profit / (d * 1.5)) * 60;
+            let div = document.getElementById('rezultat');
+            if (rata > 40) { div.className = 'verde'; div.innerHTML = "ACCEPTĂ ✅<br>" + rata.toFixed(2) + " RON/h"; }
+            else { div.className = 'rosu'; div.innerHTML = "REFUZĂ ❌<br>" + rata.toFixed(2) + " RON/h"; }
         }
-    }
-
-    // Verificare licență simplă
-    let start = localStorage.getItem('start_trial');
-    if (!start) { localStorage.setItem('start_trial', new Date().getTime()); }
-    let acum = new Date().getTime();
-    if (acum - start > 2 * 24 * 60 * 60 * 1000) {
-        document.body.innerHTML = "<h1>⏳ TRIAL EXPIRAT</h1><button>CUMPĂRĂ LICENȚĂ</button>";
-    }
-</script>
+    </script>
 </body>
 </html>
